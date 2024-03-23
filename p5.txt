@@ -1,0 +1,142 @@
+create table EMPLOYEE(SSN char(5) primary key, Fname varchar(15),
+Lname varchar(15), Address varchar(15), Sex char(1), Salary decimal(8,2),
+SuperSSN char(5), Dno int);
+create table DEPARTMENT(Dno int primary key, Dname varchar(10),
+MgrSSN char(5), MgrStartDate date);
+create table DLOCATION(Dno int, Dloc varchar(15), primary key(Dno,
+Dloc));
+create table PROJECT(Pno int(5) primary key, Pname varchar(15), Plocation
+varchar(15), Dno int);
+create table WORKS_ON(SSN char(5), Pno int(5), Hours int(2), primary
+key(SSN, Pno));
+
+alter table EMPLOYEE add constraint FKsuperssn foreign key(SuperSSN)
+references EMPLOYEE(SSN);
+alter table EMPLOYEE add constraint FKdnumber foreign key(Dno) references
+DEPARTMENT(Dno);
+alter table DEPARTMENT add constraint FKMgrSSN foreign key(MgrSSN)
+references EMPLOYEE(SSN);
+alter table DLOCATION add constraint FKLocation foreign key(Dno) references
+DEPARTMENT(Dno);
+alter table PROJECT add constraint FKProjDept foreign key(Dno) references
+DEPARTMENT(Dno);
+alter table WORKS_ON add constraint FKWorksProj foreign key(Pno)
+references PROJECT(Pno);
+alter table WORKS_ON add constraint FKWorksEmp foreign key(SSN)
+references EMPLOYEE(SSN);
+
+
+insert into employee values
+('CEC01','John','Scott','Dallas,Houston','M',850000,NULL,NULL),
+('CEC02','James','Borg','Voss,Houston','M',770000,NULL,NULL),
+('CEC03','Alicia','Zeleya','Castie Spring','F',780000,NULL,NULL),
+('CEC04','Ramesh','Narayan','Banglore','M',800000,NULL,NULL),
+('CEC05','Reena','Sharma','Mumbai','F',580000,NULL,NULL),
+('CEC06','Aditya','Roy','Jaipur','M',850000,NULL,NULL);
+
+
+INSERT INTO department VALUES
+(1, 'AppDev', 'CEC01', '2000-06-01'),
+(2, 'Accounts', 'CEC04', '2000-05-25'),
+(3, 'Robotics', 'CEC06', '2015-02-05'),
+(4, 'Testing', 'CEC01', '2000-05-25'),
+(5, 'ES', 'CEC06', '2014-11-25');
+
+update EMPLOYEE set Dno=1 where SSN='CEC01';
+update EMPLOYEE set Dno=3 where SSN='CEC02';
+update EMPLOYEE set Dno=4 where SSN='CEC03';
+update EMPLOYEE set Dno=2 where SSN='CEC04';
+update EMPLOYEE set Dno=5 where SSN='CEC05';
+update EMPLOYEE set Dno=3 where SSN='CEC06';
+
+
+update EMPLOYEE set SuperSSN='CEC06' where SSN='CEC01';
+update EMPLOYEE set SuperSSN='CEC01' where SSN='CEC03';
+update EMPLOYEE set SuperSSN='CEC05' where SSN='CEC02';
+update EMPLOYEE set SuperSSN='CEC06' where SSN='CEC05';
+
+
+insert into DLOCATION values
+(1, 'Texas'),
+(2, 'Mumbai'),
+(3, 'New Jersey'),
+(3, 'Jaipur'),
+(4, 'Bangalore'),
+(5, 'New Jersey');
+
+insert into PROJECT values
+(111, 'IOT', 'Bangalore', 1),
+(222, 'INSAT', 'Jaipur', 5),
+(333, 'UDAN', 'Jaipur', 5),
+(444, 'MetalDetector', 'Texas', 3),
+(555, 'WarFeildSpying', 'Texas', 3);
+
+insert into WORKS_ON values
+('CEC01', 111, 30),
+('CEC02', 222, 15),
+('CEC02', 333, 15),
+('CEC03', 444, 12),
+ ('CEC03', 555, 18),
+('CEC05', 333, 20),
+('CEC05', 555, 10),
+('CEC06', 222, 10),
+('CEC06', 444, 20),
+('CEC01', 555, 10);
+
+
+(select Pno
+from Project P, Department D, Employee E
+where P.Dno = D.Dno and D.MgrSSN=E.SSN and E.Lname='Scott')
+union
+(select Pno
+from works_on W, employee E
+where W.SSN = E.SSN and E.Lname='Scott');
+
+
+select e. Fname, e.Salary, 1.1*e. Salary Inc_Salary
+from employee e, project p, works_on w
+where e.SSN=w.SSN and p. Pno=w.Pno and p. Pname='IOT';
+
+
+
+SELECT Dname, SUM(Salary) AS TOT_SAL, MAX(Salary) AS MAX_SAL,
+MIN(Salary) AS MIN_SAL, AVG(Salary) AS AVG_SAL
+FROM employee
+NATURAL JOIN department
+WHERE Dname = 'Accounts';
+
+
+SELECT E.FNAME
+FROM EMPLOYEE E
+WHERE NOT EXISTS (SELECT P. PNO
+FROM PROJECT P
+WHERE P. DNO=5 AND
+P.PNO NOT IN (SELECT W.PNO
+FROM WORKS_ON W
+WHERE E.SSN=W.SSN));
+
+select *from employee;
+SELECT DNO, COUNT(*)
+FROM EMPLOYEE
+WHERE
+DNO IN (SELECT DNO
+FROM EMPLOYEE
+GROUP BY DNO
+HAVING COUNT(*)>5)
+AND
+SALARY>600000
+GROUP BY DNO;
+
+SELECT DNO, COUNT(*)
+FROM EMPLOYEE
+WHERE
+DNO IN (SELECT DNO
+FROM EMPLOYEE
+GROUP BY DNO
+HAVING COUNT(*)>1)
+AND
+SALARY>600000
+GROUP BY DNO;
+
+
+
