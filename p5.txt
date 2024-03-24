@@ -1,43 +1,29 @@
-CREATE TABLE DEPARTMENT
-(DNO INTEGER PRIMARY KEY,
-DNAME VARCHAR (20),
-MGRSTARTDATE DATE);
+create table EMPLOYEE(SSN char(5) primary key, Fname varchar(15),
+Lname varchar(15), Address varchar(15), Sex char(1), Salary decimal(8,2),
+SuperSSN char(5), Dno int);
+create table DEPARTMENT(Dno int primary key, Dname varchar(10),
+MgrSSN char(5), MgrStartDate date);
+create table DLOCATION(Dno int, Dloc varchar(15), primary key(Dno,
+Dloc));
+create table PROJECT(Pno int(5) primary key, Pname varchar(15), Plocation
+varchar(15), Dno int);
+create table WORKS_ON(SSN char(5), Pno int(5), Hours int(2), primary
+key(SSN, Pno));
 
-CREATE TABLE EMPLOYEE
-(SSN VARCHAR (20) PRIMARY KEY,
-FNAME VARCHAR (20),
-LNAME VARCHAR (20),
-ADDRESS VARCHAR (20),
-SEX CHAR (1),
-SALARY INTEGER,
-SUPERSSN VARCHAR (20),
-DNO INTEGER,
-FOREIGN KEY(SUPERSSN) REFERENCES EMPLOYEE (SSN),
-FOREIGN KEY(DNO) REFERENCES DEPARTMENT (DNO));
-
-ALTER TABLE DEPARTMENT
-ADD COLUMN MGRSSN VARCHAR(20),
-ADD CONSTRAINT fk_mgrssn FOREIGN KEY (MGRSSN) REFERENCES EMPLOYEE(SSN);
-
-CREATE TABLE DLOCATION
-(DLOC VARCHAR (20) PRIMARY KEY,
- DNO INTEGER,
-FOREIGN KEY(DNO) REFERENCES DEPARTMENT (DNO));
-
-CREATE TABLE PROJECT
-(PNO INTEGER PRIMARY KEY, 
-PNAME VARCHAR (20),
-PLOCATION VARCHAR(20),
-DNO INTEGER(20),
-FOREIGN KEY(DNO) REFERENCES DEPARTMENT(DNO));
-
-CREATE TABLE WORKS_ON
-(HOURS INTEGER,
-SSN VARCHAR(20),
-PNO INTEGER,
-FOREIGN KEY(SSN) REFERENCES EMPLOYEE(SSN),
-FOREIGN KEY(PNO) REFERENCES PROJECT(PNO),
-PRIMARY KEY (SSN, PNO));
+alter table EMPLOYEE add constraint FKsuperssn foreign key(SuperSSN)
+references EMPLOYEE(SSN);
+alter table EMPLOYEE add constraint FKdnumber foreign key(Dno) references
+DEPARTMENT(Dno);
+alter table DEPARTMENT add constraint FKMgrSSN foreign key(MgrSSN)
+references EMPLOYEE(SSN);
+alter table DLOCATION add constraint FKLocation foreign key(Dno) references
+DEPARTMENT(Dno);
+alter table PROJECT add constraint FKProjDept foreign key(Dno) references
+DEPARTMENT(Dno);
+alter table WORKS_ON add constraint FKWorksProj foreign key(Pno)
+references PROJECT(Pno);
+alter table WORKS_ON add constraint FKWorksEmp foreign key(SSN)
+references EMPLOYEE(SSN);
 
 insert into employee values
 ('CEC01','John','Scott','Dallas,Houston','M',850000,NULL,NULL),
@@ -46,7 +32,6 @@ insert into employee values
 ('CEC04','Ramesh','Narayan','Banglore','M',800000,NULL,NULL),
 ('CEC05','Reena','Sharma','Mumbai','F',580000,NULL,NULL),
 ('CEC06','Aditya','Roy','Jaipur','M',850000,NULL,NULL);
-
 
 INSERT INTO department VALUES
 (1, 'AppDev', 'CEC01', '2000-06-01'),
