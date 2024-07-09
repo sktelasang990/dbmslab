@@ -1,0 +1,1 @@
+g++ 3d_object.cpp -o 3d_object -lGL -lGLU -lglut
