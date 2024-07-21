@@ -1,1 +1,5 @@
 g++ 3d_object.cpp -o 3d_object -lGL -lGLU -lglut
+
+
+
+wine ~/.wine/drive_c/Program\ Files\ \(x86\)/Notepad++/notepad++.exe
