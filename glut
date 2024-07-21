@@ -3,3 +3,8 @@ g++ 3d_object.cpp -o 3d_object -lGL -lGLU -lglut
 
 
 wine ~/.wine/drive_c/Program\ Files\ \(x86\)/Notepad++/notepad++.exe
+
+
+
+sudo apt update
+sudo apt install freeglut3-dev libglu1-mesa-dev libgl1-mesa-dev
